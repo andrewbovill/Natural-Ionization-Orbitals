@@ -73,4 +73,4 @@ print "Delta P = \n", Dp, "\n"
 
 # Read MO Coefficients 
 
-
+# Note to self: Once S is calculated, next checkpoint should be <PS>

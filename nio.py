@@ -4,6 +4,7 @@
 #  
 #  NIOcal v. 1.0
 #  By Hassan Harb
+#  University of California Merced
 #  Program that reads in SCF Densities of ground and detached states and returns the eigenvalues and eigenvectors of 
 #  natural ionization orbitals
 #  

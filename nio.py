@@ -54,6 +54,10 @@ print "\n"
 # print "PRaw2\n", PRaw2
 
 # Transform arrays into matrices, call function symmetrize
+
+# P1 = NBasis x NBasis Matrix, density matrix of gorund state
+# P2 = NBasis x NBasis Matrix, density matrix of detached state
+
 P1 = np.zeros((NBasis,NBasis))
 P2 = np.zeros((NBasis,NBasis))
 

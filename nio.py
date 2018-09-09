@@ -71,6 +71,16 @@ print "Pi = \n", P2, "\n"
 Dp = P2 - P1
 print "Delta P = \n", Dp, "\n"
 
-# Read MO Coefficients 
-
+# Read MO Coefficients
+Craw = genfromtxt('./ground_C.dat',dtype=None)
+C = np.zeros((NBasis,NBasis))
+n=0
+for i in range(0,NBasis):
+  for j in range(0,NBasis):
+#    Nc=len(Craw)
+    C[j,i]=Craw[n]
+    n=n+1
+# Calculate Overlap Matrix
 # Note to self: Once S is calculated, next checkpoint should be <PS>
+
+

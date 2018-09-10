@@ -35,7 +35,7 @@ def symmetrize(a):
   b = np.zeros((Nbas,Nbas))
   n = 0
   for i in range(0,Nbas):
-    for j in range(i,Nbas):
+    for j in range(0,i+1):
       b[i,j]=a[n]
       b[j,i]=a[n]
       n=n+1
@@ -83,4 +83,9 @@ for i in range(0,NBasis):
 # Calculate Overlap Matrix
 # Note to self: Once S is calculated, next checkpoint should be <PS>
 
+CInv = np.linalg.inv(C)
+#Overlap Matrix S
+# S = (C**(-1))t*(C**(-1))
+S = np.dot(np.transpose(CInv,CInv))
+print "Overlap Matrix = \n", S
 

@@ -20,6 +20,7 @@ import math
 import numpy as np
 from numpy import genfromtxt
 import csv
+from decimal import Decimal
 
 # PRaw1 = P of ground state
 # PRaw2 = P of detached state
@@ -40,6 +41,10 @@ def symmetrize(a):
       b[j,i]=a[n]
       n=n+1
   return b
+
+def sci_notation(n):
+    a = '%.8E' % n
+    return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
 
 # Read in arrays 
 PRaw1 = genfromtxt('./ground_P.dat',dtype=None)
@@ -88,4 +93,5 @@ CInv = np.linalg.inv(C)
 # S = (C**(-1))t*(C**(-1))
 S = np.dot(np.transpose(CInv,CInv))
 print "Overlap Matrix = \n", S
+
 

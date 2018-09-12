@@ -94,4 +94,49 @@ CInv = np.linalg.inv(C)
 S = np.dot(np.transpose(CInv,CInv))
 print "Overlap Matrix = \n", S
 
+#Checkpoint: <Dp.S> = -1
+
+DpSa = np.dot(Dpa,S)
+DpSb = np.dot(Dpb,S)
+
+print "Alpha <DeltaP S> = ", np.trace(DpSa)
+print "Beta <DeltaP S> = ", np.trace(DpSb)
+
+#Calculate S**(0.5)
+Svals, Svecs = np.linalg.eig(S)
+Sval_minhalf = (np.diag(Svals**(0.5)))
+Shalf = np.dot(Svecs,np.dot(Sval_minhalf,np.transpose(Svecs)))
+print "S**(0.5) = \n", Shalf
+
+#Calculae S**(0.5).Dpa.S**(0.5) and S**(0.5).Dpb.S**(0.5)
+#Let these two matrices be Z1 and Z2, respectively
+
+Z1 = np.dot(Shalf,np.dot(Dpa,Shalf))
+Z2 = np.dot(Shalf,np.dot(Dpb,Shalf))
+
+print "Z1 = \n", Z1
+print "Z2 = \n", Z2
+
+#Diagonaize Z1 and Z2, obtain eigenvalues (e1 and e2) and eigenvectors (U1 and U2)
+
+e1, U1 = np.linalg.eig(Z1)
+e2, U2 = np.linalg.eig(Z2)
+
+e1 = np.sort(e1)
+e2 = np.sort(e2)
+
+print "Alpha NIO Eigenvalues = \n", e1
+print "Beta NIO Eigenvalues = \n", e2
+print "Alpha NIO Eigenvectors = \n", U1
+print "Beta NIO Eigenvectors = \n", U2
+
+#Backtransform U1 and U2 into the AO Basis
+
+V1 = np.dot(np.linalg.inv(Shalf),U1)
+V2 = np.dot(np.linalg.inv(Shalf),U2)
+
+print "V1 =\n", V1, "\n"
+print "V2 =\n", V2, "\n"
+
+
 

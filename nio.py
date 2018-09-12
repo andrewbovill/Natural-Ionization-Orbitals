@@ -44,7 +44,8 @@ def symmetrize(a):
 
 def sci_notation(n):
     a = '%.8E' % n
-    return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
+    return '%.8E' % Decimal(n)
+#    return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
 
 # Read in arrays 
 PRaw1 = genfromtxt('./ground_P.dat',dtype=None)

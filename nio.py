@@ -384,7 +384,5 @@ with open(filename1,'r') as origin:
       while (pointer < len(data)):
          f2.write(data[pointer])
          pointer = pointer+1
-print "Number of Basis functions = ", NBasis  
-print "First element = ", V1[0,0] 
-print "Second element = ", e2[1] 
+print "Copying data to new checkpoint file: DONE"
 print "NIO Calculation done!"

@@ -11,13 +11,14 @@
 #
 #  For more details, check: J. Chem. Phys., 144, 204117 (2016)
 #
-#  Last edited by Hassan Harb, September 13, 2018
+#  Last edited by Hassan Harb, December 13, 2018
 #
 #######################################################################################################################
 
 from __future__ import division
 import sys
 import math
+import cmath
 import numpy as np
 from numpy import genfromtxt
 import csv
@@ -39,7 +40,7 @@ def symmetrize(a):
 #Function: convert output to scientific notation
 def sci_notation(n):
     a = '%.8E' % n
-    return '%.8E' % Decimal(n)
+    return '%.8E' % Decimal(n.real)
 #    return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
 
 
@@ -278,8 +279,6 @@ print "Z2 = \n", Z2
 e1, U1 = np.linalg.eig(Z1)
 e2, U2 = np.linalg.eig(Z2)
 
-#e1 = np.sort(e1)
-#e2 = np.sort(e2)
 
 print "Alpha NIO Eigenvalues = \n", e1
 print "Beta NIO Eigenvalues = \n", e2
@@ -293,6 +292,19 @@ V2 = np.dot(np.linalg.inv(Shalf),U2)
 
 print "V1 =\n", V1, "\n"
 print "V2 =\n", V2, "\n" 
+
+
+####   Trial section: parameter to identify how many electrons are involved in the transition ######
+
+par = 0
+
+for i in range(0,NBasis):
+    par = par + e1[i]*e1[i] + e2[i]*e2[i]
+
+print "The parameter is ", par.real
+
+
+####   END OF TRIAL
 
 # Part 3: write everything to a new fchk file:
 # We need to replace Alpha Orbital Energies with e1 & Beta orbital energies with e2
@@ -325,7 +337,7 @@ with open(filename1,'r') as origin:
           f2.write(" ")
           if (e1[j] >= 0):
              f2.write(" ")
-          f2.write(str(sci_notation(e1[j])))
+          f2.write(str(sci_notation(e1[j].real)))
           if (counter%5 == 0):
               f2.write("\n")
               counter=0
@@ -339,7 +351,7 @@ with open(filename1,'r') as origin:
           f2.write(" ")
           if (e2[j] >= 0):
              f2.write(" ")
-          f2.write(str(sci_notation(e2[j])))
+          f2.write(str(sci_notation(e2[j].real)))
           if (counter%5 ==0):
               f2.write("\n")
               counter=0
@@ -354,7 +366,7 @@ with open(filename1,'r') as origin:
                f2.write(" ")
                if (V1[j,i] >= 0):
                   f2.write(" ")
-               f2.write(str(sci_notation(V1[j,i])))
+               f2.write(str(sci_notation(V1[j,i].real)))
                if (counter%5 ==0):
                    f2.write("\n")
                    counter=0
@@ -370,7 +382,7 @@ with open(filename1,'r') as origin:
                   f2.write(" ")
                   if (V2[j,i] >= 0):
                      f2.write(" ")
-                  f2.write(str(sci_notation(V2[j,i])))
+                  f2.write(str(sci_notation(V2[j,i].real)))
                   if (counter%5 ==0):
                       f2.write("\n")
                       counter=0

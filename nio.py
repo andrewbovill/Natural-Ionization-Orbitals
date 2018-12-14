@@ -294,18 +294,6 @@ print "V1 =\n", V1, "\n"
 print "V2 =\n", V2, "\n" 
 
 
-####   Trial section: parameter to identify how many electrons are involved in the transition ######
-
-par = 0
-
-for i in range(0,NBasis):
-    par = par + e1[i]*e1[i] + e2[i]*e2[i]
-
-print "The parameter is ", par.real
-
-
-####   END OF TRIAL
-
 # Part 3: write everything to a new fchk file:
 # We need to replace Alpha Orbital Energies with e1 & Beta orbital energies with e2
 # We also need to replace Alpha MO Coefficients with V1 & Beta MO Coefficients with V2

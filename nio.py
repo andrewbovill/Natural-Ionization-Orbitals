@@ -11,7 +11,7 @@
 #
 #  For more details, check: J. Chem. Phys., 144, 204117 (2016)
 #
-#  Last edited by Hassan Harb, January 29, 2019
+#  Last edited by Hassan Harb, Feb. 1, 2019
 #
 #######################################################################################################################
 

@@ -11,7 +11,7 @@
 #
 #  For more details, check: J. Chem. Phys., 144, 204117 (2016)
 #
-#  Last edited by Hassan Harb, December 13, 2018
+#  Last edited by Hassan Harb, January 29, 2019
 #
 #######################################################################################################################
 
@@ -43,7 +43,32 @@ def sci_notation(n):
     return '%.8E' % Decimal(n.real)
 #    return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
 
+#Function: Calculate Ncol, the column vector that shows the MO contributions of NIOs
+def CalNCol(T,k,NBasis,S):
+   Ti = np.zeros(NBasis)
+   for i in range(0,NBasis):
+      Ti[i] = T[i,k].real
 
+   N = np.outer(Ti,Ti)
+   N = np.multiply(N,S)
+   print "trace N.S = ", np.trace(np.dot(N,S)) 
+   NCol = np.zeros(NBasis)
+   for i in range(0,NBasis):
+       for j in range(0,NBasis):
+          NCol[i] = NCol[i] + N[j,i]
+
+   NIOPops(NCol,NBasis)
+#   print "T =", T, "\n"
+#   print "Ti =", Ti, "\n"
+#   print "N = ", N, "\n"
+#   print "NCol = ", NCol, "\n"
+
+#Function: Calculate the percentage contributions of MOs in each NIO
+def NIOPops(NCol,NBasis):
+    for i in range(0,NBasis):
+       if (np.absolute(NCol[i]) >= 0.01):
+           print "The Contribution from MO ", i+1 , " is ", np.around(NCol[i],decimals=2)*100, "percent \n"
+    print "---------------\n"
 #Part 1: Read in the matrix files from two checkpoint files
 
 NBasis = 0
@@ -51,6 +76,7 @@ filename1 = sys.argv[1]
 filename2 = sys.argv[2]
 filename3 = "NIO-"+filename1
 acc = 8 #accuracy to the acc's decimal place
+minEigVal = 0.2
 
 print "NIO: Calculates the density difference between two checkpoint files.\n"
 print "Checkpoint 1:", filename1
@@ -96,7 +122,8 @@ if (PElements % 5 ==0):
 print "MO Lines = ", MOlines, "\n"
 print "P Lines = ", Plines, "\n"
 
-MOraw = np.zeros(MOElements)
+MOrawa = np.zeros(MOElements)
+MOrawb = np.zeros(MOElements)
 TotalPraw1 = np.zeros(PElements) 
 SpinPraw1 = np.zeros(PElements)
 
@@ -120,12 +147,23 @@ with open(filename1,'r') as origin:
                  nextline = origin.next()
                  nextline = nextline.split()
                  for p in range(p,len(nextline)):
-                   MOraw[r] = nextline[p]
+                   MOrawa[r] = nextline[p]
                    r = r+1
                  p = 0
         if "Beta MO coefficients" in line:
+              r = 0
               i=i+1
               BMO = i
+              print "Beta MO coefficients starts at line :", i
+              j=i+MOlines-1
+              print "Beta MO coefficients ends at line :", j
+              for m in range(0,j-i+1):
+                 nextline = origin.next()
+                 nextline = nextline.split()
+                 for p in range(p,len(nextline)):
+                   MOrawb[r] = nextline[p]
+                   r = r+1
+                 p = 0
         if  "Total SCF Density" in line:
               i=i+1
               r = 0
@@ -186,13 +224,15 @@ with open(filename2,'r') as origin:
                    r = r+1
                  p = 0
 
-MOraw = np.around(MOraw,decimals=acc)
-TotalPraw1 = np.around(TotalPraw1,decimals=acc)
+MOrawa = np.around(MOrawa,decimals=acc)
+MOrawb = np.around(MOrawb,decimals=acc)
+TotalPzraw1 = np.around(TotalPraw1,decimals=acc)
 SpinPraw1 = np.around(SpinPraw1,decimals=acc)
 TotalPraw2 = np.around(TotalPraw2,decimals=acc)
 SpinPraw2 = np.around(SpinPraw2,decimals=acc)
 
-print "Stored Alpha MO Coefficients matrix = \n", MOraw
+print "Stored Alpha MO Coefficients matrix = \n", MOrawa
+print "Stored Beta MO Coefficients matrix = \n", MOrawb
 print "Stored Total SCF Density matrix = \n", TotalPraw1
 print "Stored Spin SCF Density matrix = \n", SpinPraw1
 
@@ -236,23 +276,30 @@ print "Beta Difference Density = \n", Dpb
 
 #MO Coefficient Matrix
 C = np.zeros((NBasis,NBasis))
+Cb = np.zeros((NBasis,NBasis))
 t=0
 for i in range(0,NBasis):
    for j in range(0,NBasis):
-     C[j,i]=MOraw[t]
+     C[j,i]=MOrawa[t]
+     Cb[j,i]=MOrawb[t]
      t=t+1
 
-print "MO Coefficient Matrix = \n", C
+#C = np.transpose(C)
+#Cb = np.transpose(Cb)
+
+print "Alpha MO Coefficient Matrix = \n", C
+print "Beta MO Coefficient Matrix = \n", Cb
 
 #Inverse of C:
 CInv = np.linalg.inv(C)
+CbInv = np.linalg.inv(Cb)
 #Overlap Matrix:
 # S = (C**(-1)t*(C**(-1))
 S = np.dot(np.transpose(CInv),CInv)
 print "Overlap Matrix = \n", S
-
+Sb = np.dot(np.transpose(CbInv),CbInv)
 #Checkpoint: <Dp.S> = -1
-
+print "Overlap Matrix (test) = \n", S
 DpSa = np.dot(Dpa,S)
 DpSb = np.dot(Dpb,S)
 
@@ -279,7 +326,6 @@ print "Z2 = \n", Z2
 e1, U1 = np.linalg.eig(Z1)
 e2, U2 = np.linalg.eig(Z2)
 
-
 print "Alpha NIO Eigenvalues = \n", e1
 print "Beta NIO Eigenvalues = \n", e2
 print "Alpha NIO Eigenvectors = \n", U1
@@ -293,10 +339,72 @@ V2 = np.dot(np.linalg.inv(Shalf),U2)
 print "V1 =\n", V1, "\n"
 print "V2 =\n", V2, "\n" 
 
+########## HH +
+
+# Screen the NIO eigenvalues, pick up the ones we need.
+
+print "Snippet test: Starting..\n"
+
+# Calculate T=CTranspose.S.U
+
+Ta = np.dot(np.transpose(C),np.dot(S,V1))
+Tb = np.dot(np.transpose(Cb),np.dot(S,V2))
+
+print "Ta =", Ta, "\n"
+print "Tb =", Tb, "\n"
+
+for i in range(0,NBasis):
+    if (np.absolute(e1[i].real) >= minEigVal):
+        print "The ", i,"th element of e1 has an eigenvalue of ", np.around(e1[i].real,decimals=3) ," perform population analysis\n"
+        print "Population analysis on Alpha NIO ", i+1, "\n"
+        print "----------------------------\n"
+        CalNCol(Ta,i,NBasis,S)        
+
+    if (np.absolute(e2[i].real) >= minEigVal):
+        print "The ", i,"th element of e2 has an eigenvalue of ", np.around(e2[i].real,decimals=3) ," perform population analysis\n"
+        print "Population analysis on Beta NIO ", i+1, "\n"
+        print "----------------------------\n"
+        CalNCol(Tb,i,NBasis,S)
+
+# Here we need to define a function that takes in C, S, and either of V1 or V2 (Depending on whether e1 or e2 has a non zero value)
+# We then extract the ith row of T, named Ti, and calculate N which is the outer product of Ti
+# After that we calculate NCol which is a column vector that sums over the rows of N 
+
+# Variables needed for the function: 
+#    1. Matrix T (NBasis,NBasis): inputted as either Ta or Tb (T = C(t)*S*V)
+#    2. Scalar i: indicates the position of the desired NIO
+#    3. Number of Basis Functions: NBasis
+
+# Generate a Matrix (Call it N) from the outer product of T(i) columns
+#Ti = np.zeros(NBasis)
+#for i in range(0,NBasis):
+#   Ti[i] = Tb[1,i]
+#N = np.outer(Ti,Ti)
+#NCol = np.zeros(NBasis)
+#for i in range(0,NBasis):
+#    for j in range(0,NBasis):
+#       NCol[i] = NCol[i] + N[i,j]
+#print "T1 =", T1, "\n"
+#print "Ti =", Ti, "\n"
+#print "N = ", N, "\n"
+#print "NCol = ", NCol, "\n"
+# Sum over the rows of the newly-formed Matrix N to get a column vector 
+
+#print "Ut.U = ", np.dot(np.transpose(U1),U1)
+#print "Ut.U = ", np.dot(np.transpose(U2),U2)
+#print "Ct.S.C = ", np.dot(np.transpose(C),np.dot(S,C))
+#print "Snippet test: complete\n"
+#print "Tb.Tbt = ", np.dot(Tb,np.transpose(Tb))
+#print "Ta.Tat = ", np.dot(Ta,np.transpose(Ta))
+
+
+##########  HH -
 
 # Part 3: write everything to a new fchk file:
 # We need to replace Alpha Orbital Energies with e1 & Beta orbital energies with e2
 # We also need to replace Alpha MO Coefficients with V1 & Beta MO Coefficients with V2
+
+# print "U.Ut = ", np.dot(U1,np.transpose(U1))
 
 pointer=0
 counter=1
@@ -332,8 +440,12 @@ with open(filename1,'r') as origin:
           counter=counter+1
       counter =1      
 #Write the Beta eigenvalues, overwrite the Beta Orbital energies
-      f2.write("\n")
       BOE = AOE + (int(NBasis/5)+2)
+      print "BOE at line =", BOE
+      if (NBasis%5 != 0):
+          f2.write("\n")
+      if (NBasis%5 == 0):
+          BOE = BOE - 1 
       f2.write(data[BOE])
       for j in range(0,NBasis):
           f2.write(" ")
@@ -345,9 +457,13 @@ with open(filename1,'r') as origin:
               counter=0
           counter = counter+1
       counter =1
-      f2.write("\n")
+#      f2.write("\n")
 #Write the Alpha NIO eigenvectors, overwrite the Alpha MO Coefficients
       AMO = BOE + (int(NBasis/5)+2)
+      if (NBasis%5 != 0):
+          f2.write("\n")
+      if (NBasis%5 == 0):
+          AMO = AMO - 1
       f2.write(data[AMO])
       for i in range(0,NBasis):
           for j in range(0,NBasis):
@@ -361,9 +477,13 @@ with open(filename1,'r') as origin:
                counter = counter + 1
          # counter =1
       counter = 1
-      f2.write("\n")
+#      f2.write("\n")
 #Write the Beta NIO eigenvectors, overwrite the Beta MO coefficients
       BMO = AMO + (int(NBasis*NBasis/5))+2
+      if (NBasis%5 != 0):
+          f2.write("\n")
+      if (NBasis%5 == 0):
+          BMO = BMO - 1
       f2.write(data[BMO])
       for i in range(0,NBasis):
              for j in range(0,NBasis):
@@ -377,12 +497,15 @@ with open(filename1,'r') as origin:
                   counter = counter + 1
            #  counter = 1
       counter = 1
-      f2.write("\n")
+      if (NBasis%5 != 0):
+         f2.write("\n")
       print "NBasis element = ", V2[0,NBasis-1]
 #Copy the rest of the checkpoint file (unchanged)      
       pointer = BMO + (int(NBasis*NBasis/5))+2
       while (pointer < len(data)):
          f2.write(data[pointer])
          pointer = pointer+1
+print "NBasis = ", NBasis
+print "length of pa =",  len(P1a), "\n"
 print "Copying data to new checkpoint file: DONE"
 print "NIO Calculation done!"

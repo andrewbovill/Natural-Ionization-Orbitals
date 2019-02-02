@@ -346,9 +346,6 @@ print "V2 =\n", V2, "\n"
 print "Snippet test: Starting..\n"
 
 # Calculate T=CTranspose.S.U
-#Test: Calculate Vt S V, this should be I:
-
-print "Vt S V =", np.dot(np.transpose(V1),np.dot(S,V1))
 
 Ta = np.dot(np.transpose(C),np.dot(S,V1))
 Tb = np.dot(np.transpose(Cb),np.dot(S,V2))

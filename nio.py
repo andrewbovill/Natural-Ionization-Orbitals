@@ -50,9 +50,9 @@ def CalNCol(T,k,NBasis,S):
       Ti[i] = T[i,k].real
 
    N = np.outer(Ti,Ti)
-   N = np.multiply(N,S)
    print "trace N = ", np.trace(N)
-   print "trace N.S = ", np.trace(np.dot(N,S)) 
+   N = np.multiply(N,S)
+   print "trace N.S = ", np.trace(N) 
    NCol = np.zeros(NBasis)
    for i in range(0,NBasis):
        for j in range(0,NBasis):

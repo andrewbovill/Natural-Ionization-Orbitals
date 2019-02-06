@@ -52,7 +52,7 @@ def CalNCol(T,k,NBasis,S):
    N = np.outer(Ti,Ti)
    print "trace N = ", np.trace(N)
    N = np.multiply(N,S)
-   print "trace N.S = ", np.trace(N) 
+   print "trace N.S = ", np.trace(N), "\n" 
    NCol = np.zeros(NBasis)
    for i in range(0,NBasis):
        for j in range(0,NBasis):

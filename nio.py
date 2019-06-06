@@ -41,7 +41,6 @@ def symmetrize(a):
 def sci_notation(n):
     a = '%.8E' % n
     return '%.8E' % Decimal(n.real)
-#    return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
 
 #Function: Calculate Ncol, the column vector that shows the MO contributions of NIOs
 def CalNCol(T,k,NBasis,S):
@@ -59,10 +58,6 @@ def CalNCol(T,k,NBasis,S):
           NCol[i] = NCol[i] + N[j,i]
 
    NIOPops(NCol,NBasis)
-#   print "T =", T, "\n"
-#   print "Ti =", Ti, "\n"
-#   print "N = ", N, "\n"
-#   print "NCol = ", NCol, "\n"
 
 #Function: Calculate the percentage contributions of MOs in each NIO
 def NIOPops(NCol,NBasis):
@@ -315,6 +310,28 @@ print "S**(0.5) = \n", Shalf
 
 #Calculae S**(0.5).Dpa.S**(0.5) and S**(0.5).Dpb.S**(0.5)
 #Let these two matrices be Z1 and Z2, respectively
+
+Sleft, Sval, Sright = np.linalg.svd(S)
+
+print "Sleft =", Sleft
+print "Sright =", Sright
+print "Svals = ", Sval
+
+print "Diff Svals =", Svals -  Sval
+
+I = np.eye(NBasis)
+
+Sval_I = np.multiply(Sval,I)
+print "Identity = ", I
+print "Sval_I", Sval_I
+
+for i in range(0,NBasis):
+    Sval_I[i,i] = Sval_I[i,i]**(0.5)
+
+S_test = np.dot(Sleft,np.dot(Sval_I,Sright))
+print "S test", S_test
+
+Shalf = S_test
 
 Z1 = np.dot(Shalf,np.dot(Dpa,Shalf))
 Z2 = np.dot(Shalf,np.dot(Dpb,Shalf))

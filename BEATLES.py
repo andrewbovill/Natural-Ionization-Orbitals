@@ -12,7 +12,7 @@ import os
 
 # BEATLES: Bundle of Essential and Assistive Tools Library for Electronic Structure
 #
-#          Updated June 18, 2019 by Hassan Harb
+#          Updated Apr 26, 2020  by Hassan Harb
 #
 #          /     |    \
 #         /      |     \
@@ -77,9 +77,9 @@ def NBasGrab(filename):
 
         if "SCF Energy" in line:
             words = line.split()
-            print "SCF Energy = ", words[3], " Hartree"
+#            print "SCF Energy = ", words[3], " Hartree"
             SCFEnergy = float(words[3])
-            print "SCF Energy (float) = ", SCFEnergy
+#            print "SCF Energy (float) = ", SCFEnergy
 
 #        if "Total Energy" in line:
 #            words = line.split()
@@ -87,8 +87,8 @@ def NBasGrab(filename):
 #            print "Total Energy = ", TotalEnergy, " Hartree"
 
   NElem = NBasis*NBasis
-  print "Number of Basis Functions (subroutine) = ", NBasis, "\n"
-  print "Charge (subroutine) = ", Charge, "\n"
+#  print "Number of Basis Functions (subroutine) = ", NBasis, "\n"
+#  print "Charge (subroutine) = ", Charge, "\n"
   return NBasis, NElem, Charge, Multiplicity, NAtoms, SCFEnergy
 
 # GeomGet: reads in the file name, number of atoms
@@ -104,17 +104,17 @@ def GeomGet(filename,NAtoms):
    if (NElements%5 == 0):
       n = 0
    RawCartLines = int(NElements/5) + n
-   print "Raw Cart lines = ", RawCartLines
-   print "Number of Atoms =", NAtoms
-   print "Number of coordinates =", NElements
+#   print "Raw Cart lines = ", RawCartLines
+#   print "Number of Atoms =", NAtoms
+#   print "Number of coordinates =", NElements
    with open(filename,'r') as origin:
       for i, line in enumerate(origin):
          if "Current cartesian coordinates" in line:
             i = i + 1
             pointer = i
-            print "Cartesian Coordinates starts at line :", pointer
+#            print "Cartesian Coordinates starts at line :", pointer
             endpointer = pointer + RawCartLines - 1
-            print "Cartesian Coordinates ends at line :", endpointer
+#            print "Cartesian Coordinates ends at line :", endpointer
             for m in range(0,endpointer - pointer +1):
                nextline = origin.next()
                nextline = nextline.split()
@@ -122,9 +122,9 @@ def GeomGet(filename,NAtoms):
                   RawCart[r] = nextline[p]
                   r = r + 1
                p = 0
-   print "Raw Cart (subroutine) = ", RawCart
+#   print "Raw Cart (subroutine) = ", RawCart
    RawCart = RawCart/1.88973
-   print "Raw Cart (converted to Angstroms) = ", RawCart
+#   print "Raw Cart (converted to Angstroms) = ", RawCart
    return  RawCart
 
 # GetAtoms:  Reads in file name, number of atoms
@@ -187,9 +187,9 @@ def MatGrab(filename,NBasis,switch):
               if  "Alpha MO coefficients" in line:
                     i=i+1
                     AMO=i
-                    print "Alpha MO coefficients starts at line :", i
+#                    print "Alpha MO coefficients starts at line :", i
                     j=i+MOlines-1
-                    print "Alpha MO coefficients ends at line :", j
+#                    print "Alpha MO coefficients ends at line :", j
                     for m in range(0,j-i+1):
                        nextline = origin.next()
                        nextline = nextline.split()
@@ -197,7 +197,7 @@ def MatGrab(filename,NBasis,switch):
                           MOrawa[r] = nextline[p]
                           r = r+1
                        p = 0
-      print "MO Raw = ", MOrawa
+#      print "MO Raw = ", MOrawa
       return MOrawa
 
    if (switch == -1):
@@ -218,9 +218,9 @@ def MatGrab(filename,NBasis,switch):
               if  "Beta MO coefficients" in line:
                     i=i+1
                     BMO=i
-                    print "Beta MO coefficients starts at line :", i
+#                    print "Beta MO coefficients starts at line :", i
                     j=i+MOlines-1
-                    print "Beta MO coefficients ends at line :", j
+#                    print "Beta MO coefficients ends at line :", j
                     for m in range(0,j-i+1):
                        nextline = origin.next()
                        nextline = nextline.split()
@@ -229,7 +229,7 @@ def MatGrab(filename,NBasis,switch):
                           r = r+1
                        p = 0
 
-         print "MO Raw = ", MOrawb
+#         print "MO Raw = ", MOrawb
          return MOrawb
 
    if (switch == 2):
@@ -245,9 +245,9 @@ def MatGrab(filename,NBasis,switch):
               i=i+1
               r = 0
               p = 0
-              print "Total SCF Density starts at line :", i
+#              print "Total SCF Density starts at line :", i
               j=i+Plines-1
-              print "Total SCF Density ends at line :", j
+#              print "Total SCF Density ends at line :", j
               for m in range(0,j-i+1):
                  nextline = origin.next()
                  nextline = nextline.split()
@@ -260,13 +260,13 @@ def MatGrab(filename,NBasis,switch):
       with open(filename1,'r') as origin:
        for i, line in enumerate(origin):
           if  "Spin SCF Density" in line:
-              print "Found Spin density!"
+#              print "Found Spin density!"
               i=i+1
               r = 0
               p = 0
-              print "Spin SCF Density starts at line: ", i
+#              print "Spin SCF Density starts at line: ", i
               j=i+Plines-1
-              print "Spin SCF Density ends at line: ", j
+#              print "Spin SCF Density ends at line: ", j
               for m in range(0,j-i+1):
                  nextline = origin.next()
                  nextline = nextline.split()
@@ -295,9 +295,9 @@ def MatGrab(filename,NBasis,switch):
                 i = i + 1
                 r = 0
                 p = 0
-                print "Alpha MO Energies starts at line: ", i
+#                print "Alpha MO Energies starts at line: ", i
                 j = i + AlphaMOlines - 1
-                print "Alpha MO Energies ends at line: ", j
+#                print "Alpha MO Energies ends at line: ", j
                 for m in range(0,j-i+1):
                     nextline = origin.next()
                     nextline = nextline.split()
@@ -305,7 +305,7 @@ def MatGrab(filename,NBasis,switch):
                         AlphaMO[r] = nextline[p]
                         r = r + 1
                     p = 0
-      print "Alpha MO energies = ", AlphaMO
+#      print "Alpha MO energies = ", AlphaMO
       return AlphaMO
 
    if (switch == -3):
@@ -320,9 +320,9 @@ def MatGrab(filename,NBasis,switch):
                 i = i + 1
                 r = 0
                 p = 0
-                print "Beta MO Energies starts at line: ", i
+#                print "Beta MO Energies starts at line: ", i
                 j = i + BetaMOlines - 1
-                print "Beta MO Energies ends at line: ", j
+#                print "Beta MO Energies ends at line: ", j
                 for m in range(0,j-i+1):
                     nextline = origin.next()
                     nextline = nextline.split()
@@ -330,7 +330,7 @@ def MatGrab(filename,NBasis,switch):
                         BetaMO[r] = nextline[p]
                         r = r + 1
                     p = 0
-      print "Beta MO energies = ", BetaMO
+#      print "Beta MO energies = ", BetaMO
       return BetaMO
 
 # sci_notation:  reads in a number
@@ -339,6 +339,13 @@ def MatGrab(filename,NBasis,switch):
 def sci_notation(n):
     a = '%.8f' % n
     return '%.8f' % Decimal(n.real)
+
+# fchk_notation: reads in a number
+# output:        prints the number in the desired notation for fchk files
+#
+def fchk_notation(n):
+    a = '%.8E' % n
+    return '%.8E' % Decimal(n.real)
 
 # AtomicSymbol:  Reads in atomic number of the element
 # Output:       -Atomic Symbol
@@ -377,7 +384,7 @@ def column2square(A,NBasis):
        t=t+1
   return C
 
-# GetOverlap:  Reads in packed symmetric column matrix, number of basis functions.
+# GetOverlap:  Reads in packed column matrix, number of basis functions.
 # Output:     -Overlap Matrix (NBasis,NBasis)
 
 def GetOverlap(A,NBasis):
@@ -399,6 +406,7 @@ def PrintSI(filename1,switch):
     RawCart = GeomGet(filename1,NAtoms)
     Cart = np.resize(RawCart,(NAtoms,3))
     filename2 = os.path.splitext(filename1)[0] + "-SI.txt"
+    filename1 = os.path.splitext(filename1)[0] 
     if (switch == 1):
        with open(filename2,'w') as f2:
          f2.write("SI info for ")
@@ -425,6 +433,8 @@ def PrintSI(filename1,switch):
                  f2.write(" ")
              f2.write("\n")
          f2.write(" ")
+         f2.write("\n\n")
+    return filename2
     if (switch == -1):
       print "SCF Energy = ", SCFEnergy, " Hartree\n"
       print "Charge = ", Charge, "\n"
@@ -443,7 +453,7 @@ def PrintSI(filename1,switch):
 
 def CalcNO(filename,NBasis):
        Palpha, Pbeta = MatGrab(filename,NBasis,2)   
-       C, a = MatGrab(filename,NBasis,1)
+       C = MatGrab(filename,NBasis,1)
        S = GetOverlap(C,NBasis)
        Svals, Svecs = np.linalg.eig(S)
        Sval_minhalf = (np.diag(Svals**(0.5)))
@@ -454,10 +464,10 @@ def CalcNO(filename,NBasis):
        NOvalsB = NOvalsB.real 
        NOvecsA = NOvecsA.real
        NOvecsB = NOvecsB.real
-       print "Alpha Natural Orbitals Eigenvectors =\n", NOvecsA
-       print "Alpha Natural Orbitals Eigenvalues  =\n", NOvalsA
-       print "Beta  Natural Orbitals Eigenvectors  =\n", NOvecsB
-       print "Beta  Natural Orbitals Eigenvalues   =\n", NOvalsB
+#       print "Alpha Natural Orbitals Eigenvectors =\n", NOvecsA
+#       print "Alpha Natural Orbitals Eigenvalues  =\n", NOvalsA
+#       print "Beta  Natural Orbitals Eigenvectors  =\n", NOvecsB
+#       print "Beta  Natural Orbitals Eigenvalues   =\n", NOvalsB
        return NOvecsA, NOvecsB, NOvalsA, NOvalsB
 
 # NElec: Reads in filename
@@ -502,15 +512,15 @@ def OrbTransform(Pa,Pb,S,n):
        Sdag2 = np.dot(Svecs,np.dot(Sval2,np.transpose(Svecs)))
        PdagAlpha = np.dot(Sdag1,np.dot(Pa,Sdag2))
        PdagBeta = np.dot(Sdag1,np.dot(Pb,Sdag2))
-       print "OrbTransform Subroutine test:\n"
-       print "PdagAlpha = ", PdagAlpha, "\n"
-       print "PdagBeta = ", PdagBeta, "\n"
+#       print "OrbTransform Subroutine test:\n"
+#       print "PdagAlpha = ", PdagAlpha, "\n"
+#       print "PdagBeta = ", PdagBeta, "\n"
        OvalsA, OvecsA = np.linalg.eig(PdagAlpha)
        OvalsB, OvecsB = np.linalg.eig(PdagBeta) 
-       print "OVals A = ", OvalsA, "\n"
-       print "OVecs A = ", OvecsA, "\n"
-       print "OVals B = ", OvalsB, "\n"
-       print "OVecs B = ", OvecsB, "\n"
+#       print "OVals A = ", OvalsA, "\n"
+#       print "OVecs A = ", OvecsA, "\n"
+#       print "OVals B = ", OvalsB, "\n"
+#       print "OVecs B = ", OvecsB, "\n"
        return PdagAlpha, PdagBeta, OvecsA, OvecsB, OvalsA, OvalsB
 
 # CartoZmat: Transforms Cartesian coordinates to z-matrix form
@@ -580,8 +590,8 @@ def TorsionABCD(e1,e2,e3,e4):
 def CartoZmat(RawCart,NAtoms,AtomicNum,filename2,switch):
   if (switch == 1):
     Cart = np.resize(RawCart,(NAtoms,3))
-    print "Cartesian = ", Cart 
-    print "Atoms list = ", AtomicNum
+#    print "Cartesian = ", Cart 
+#    print "Atoms list = ", AtomicNum
     for i in range(len(AtomicNum)):
         Symbol = AtomicSymbol(int(AtomicNum[i]))
         if (i > 2):
@@ -661,7 +671,7 @@ def CartoZmat(RawCart,NAtoms,AtomicNum,filename2,switch):
          elif (i == 0):
            f2.write(Symbol)
            f2.write("\n")           
-    print "test test"
+#    print "test test"
 
 # Section 2: Reading from gaussian matrix files
 
@@ -671,7 +681,7 @@ def CartoZmat(RawCart,NAtoms,AtomicNum,filename2,switch):
 #         -1 : Beta Core Hamiltonian
 #          2 : Alpha Fock Matrix
 #         -2 : Beta Fock Matrix
-#
+#          3 : Dipole matrix elements (x,y,z) [IN PROGRESS]
 
 #def ERIRead(filename):
 #    print "Reading ERIs from Gaussian Matrix File"
@@ -798,6 +808,97 @@ def MatGrab2(filename,NBasis,switch):
                      i = m - 2
         return FockRawB
 
+    if (switch == 3):
+       print "Reading Dipole integrals, matrix x\n"
+       NElements = int(NBasis*(NBasis +1)/2)
+       print "Looking for ", NElements, " elements of the Dipole integrals matrix x\n"
+       DipX_Raw = np.zeros(NElements)
+       p = 0
+       n = 0
+       r = 0
+       with open(filename,'r') as origin:
+            for i, line in enumerate(origin):
+                if " DIPOLE INTEGRALS, matrix     1" in line:
+                   while (p < NElements):
+                     NLines = NBasis - 5*r
+                     if (NLines < 0):
+                        print "Done reading Dipole X matrix\n"
+                     j = i+3
+                     i = i + 4
+                     end = j + NLines -1
+                     nextline = origin.next()
+                     words = nextline.split()
+                     for m in range(i,i+NLines):
+                         nextline = origin.next()
+                         words = nextline.split()
+                         for j in range(1,len(words)):
+                             DipX_Raw[p] = float(words[j].replace('D','E'))
+                             p = p + 1
+                     r = r + 1
+                     i = m - 2
+       print "Dip X raw = ", DipX_Raw
+
+       print "Reading Dipole integrals, matrix y\n"
+       NElements = int(NBasis*(NBasis +1)/2)
+       print "Looking for ", NElements, " elements of the Dipole integrals matrix y\n"
+       DipY_Raw = np.zeros(NElements)
+       p = 0
+       n = 0
+       r = 0
+       with open(filename,'r') as origin:
+            for i, line in enumerate(origin):
+                if " DIPOLE INTEGRALS, matrix     2" in line:
+                   while (p < NElements):
+                     NLines = NBasis - 5*r
+                     if (NLines < 0):
+                        print "Done reading Dipole Y matrix\n"
+                     j = i+3
+                     i = i + 4
+                     end = j + NLines -1
+                     nextline = origin.next()
+                     words = nextline.split()
+                     for m in range(i,i+NLines):
+                         nextline = origin.next()
+                         words = nextline.split()
+                         for j in range(1,len(words)):
+                             DipY_Raw[p] = float(words[j].replace('D','E'))
+                             p = p + 1
+                     r = r + 1
+                     i = m - 2
+       print "Dip Y raw = ", DipY_Raw                  
+
+       print "Looking for ", NElements, " elements of the Dipole integrals matrix z\n"
+       DipZ_Raw = np.zeros(NElements)
+       p = 0
+       n = 0
+       r = 0
+       with open(filename,'r') as origin:
+            for i, line in enumerate(origin):
+                if " DIPOLE INTEGRALS, matrix     3" in line:
+                   while (p < NElements):
+                     NLines = NBasis - 5*r
+                     if (NLines < 0):
+                        print "Done reading Dipole Z matrix\n"
+                     j = i+3
+                     i = i + 4
+                     end = j + NLines -1
+                     nextline = origin.next()
+                     words = nextline.split()
+                     for m in range(i,i+NLines):
+                         nextline = origin.next()
+                         words = nextline.split()
+                         for j in range(1,len(words)):
+                             DipZ_Raw[p] = float(words[j].replace('D','E'))
+                             p = p + 1
+                     r = r + 1
+                     i = m - 2
+       print "Dip Z raw = ", DipZ_Raw
+       return symmetrizeMat(DipX_Raw), symmetrizeMat(DipY_Raw), symmetrizeMat(DipZ_Raw)
+
+
+
+
+
 # SymmetrizeMat: Reads in packed matrix (recovered from Matrix file) and prints out NBasis x NBasis matrix
 # Input: Packed lower triangular A
 # Output: N x N Matrix
@@ -812,42 +913,42 @@ def symmetrizeMat(a):
    loop = NBasis
    nBlock = int(NBasis/5)
    nRem = NBasis%5
-   print "nBlock = ", nBlock
-   print "nRem = ", nRem
+#   print "nBlock = ", nBlock
+#   print "nRem = ", nRem
    i = start
    j = start
    if (nBlock == 0):
       nBlock =1
 
    while (l < nBlock):
-       print "retrieving block ", l
+#       print "retrieving block ", l
        for i in range (start,loop):
               for j in range(start,start+5):
                   if (j<=i):
-                    print "i,j = ",i,j
+#                    print "i,j = ",i,j
                     NewMat[i,j] = a[t]
                     NewMat[j,i] = a[t]
-                    print "A[t]= ", a[t]
+#                    print "A[t]= ", a[t]
                     t = t + 1
        start = start + 5
        l = l + 1
-   print "t = ", t
-   print "values of i and j after nBlock loop is over: ", i, j
+#   print "t = ", t
+#   print "values of i and j after nBlock loop is over: ", i, j
    j = j + 1
    start = j
-   print "NBasis - nRem = ", NBasis -nRem
+#   print "NBasis - nRem = ", NBasis -nRem
    i = NBasis - nRem
    while (i < NBasis):
        j = start
        while (j <= i):
-         print "i,j = ",i,j
+#         print "i,j = ",i,j
          NewMat[i,j] = a[t]
          NewMat[j,i] = a[t]
-         print "A[t]= ", a[t]
+#         print "A[t]= ", a[t]
          t = t + 1
          j = j + 1
        i = i + 1
-   print "final value of t = ", t
+#   print "final value of t = ", t
    return NewMat
 
 # ERIRead: reads in regular 2e integrals from formatted matrix file
@@ -914,3 +1015,211 @@ def ERIRead(filename,NBasis):
     #    print "mu nu lambda sigma = ", int(eri_compact[i,0]), ", int = ", eri_compact[i,1], "One D array Value =", eri_array[eri_compact[i,0]]
 
     return eri_array
+
+# OVParse breaks down the MO coefficient matrix (NBasis x NBasis) into an occupied (NBasis x NOcc) and a virtual (NBasis x (Nbasis-NOcc)) matrices
+# Input: A: MO Coefficient (NBasis x NBasis)
+#        NBasis
+#        NOcc = number of electrons
+#
+# Output: A_Occ: rectangular NBasis x NOcc matrix: Columns of occupied MOs
+#         A_Virt: rectangular NBasis x (NBasis - NOcc) matrix: Columns of virtual MOs
+
+##  Note TO SELF: Needs to be tested more, was only tested on H2 and V jobs.
+
+def OVParse(A,NBasis,NOcc):
+
+    A_Occ = np.zeros((NBasis,NOcc))
+    A_Virt = np.zeros((NBasis,NBasis-NOcc))
+
+    for i in range(0,NOcc):
+        A_Occ[:,i] = A[:,i]
+
+    for j in range(0,NBasis-NOcc):
+        A_Virt[:,j] = A[:,j+NOcc]
+
+    return A_Occ, A_Virt
+
+# Biorthog: Calculates the overlap between two sets of MO Coefficients, prints out the final value of the overlap
+# Input: A, B: MO Coefficients, can either be full or parsed (using OVParse subroutine)
+#        S: AO overlap matrix
+#
+# Output: the final value of the overlap
+# 
+# Option: switch: 1 : print all relevant matrices
+#                -1 : Dont print any matrices
+#
+
+def Biorthog(A,B,S,switch):                 # eqn numbers based on personal notes
+   D = np.dot(np.transpose(B),np.dot(S,A))  # eq. 1
+   u, d, v  = np.linalg.svd(D)              # eq. 2
+    
+   DtD = np.dot(np.transpose(D),D)
+   l, V = np.linalg.eig(DtD)
+   U = np.dot(D,V)
+   if (switch==1):
+      print "D = ", D
+      print "DtD = ", DtD
+      print "lambdas = ", l
+      print "Eig Vecs of DtD = ", V
+      print "Determinants = ", np.linalg.det(u), np.linalg.det(v)
+      print "u = ", u
+      print "v = ", v
+   overlap =  np.linalg.det(u)*np.prod(d)*np.linalg.det(v)
+   return d, U, V, D
+
+# PickColumn: Subroutine that selects a specific column from a two dimensional matrix (NBasis,NBasis), outputs an array (NBasis,1)
+# Input: A: Two dimensional matrix
+#        NBasis: Number of basis functions for A
+#        i: the position of the column to be selected
+#
+# Output: One dimensional array (NBasis,1) that is the i-th column of matrix A
+#
+
+def PickColumn(A,NBasis,i):
+    A_Column = np.zeros((NBasis,1))
+    for  j in range(0,NBasis):
+        A_Column[j,0] = A[j,i]
+
+    return A_Column
+
+# WriteMOs: Subroutine that replaces the MO coefficients and orbital energies in a fchk file
+# Input:    
+#
+def WriteMOs(filename1,filename3,V1,V2,e1,e2,NBasis):
+
+  MOlines = int(len(V1)/5) + 1
+  p = 0
+  r = 0
+  AOE = 0
+
+  with open(filename1,'r') as origin:
+      for i, line  in enumerate(origin):
+          if "Alpha Orbital Energies" in line:
+                AOE = i
+          if  "Alpha MO coefficients" in line:
+                i=i+1
+                AMO=i
+                j=i+MOlines-1
+                for m in range(0,j-i+1):
+                   nextline = origin.next()
+                   nextline = nextline.split()
+                   for p in range(p,len(nextline)):
+                     r = r+1
+                   p = 0
+          if "Beta Orbital Energies" in line:
+                BOE = i
+          if "Beta MO coefficients" in line:
+                r = 0
+                i=i+1
+                BMO = i
+                j=i+MOlines-1
+                for m in range(0,j-i+1):
+                   nextline = origin.next()
+                   nextline = nextline.split()
+                   for p in range(p,len(nextline)):
+                     r = r+1
+                   p = 0
+
+  pointer=0
+  counter=1
+
+
+  with open(filename1,'r') as origin:
+    data = origin.readlines()
+    if "Alpha Orbital Energies" in line:
+      AOE = i  
+      BOE = AOE + int(NBasis/5) + 1
+    with open(filename3,'w') as f2:
+  
+        print "Writing results to new output file: ", filename3, " ... "
+  
+        while (pointer < AOE+1):
+           f2.write(data[pointer])
+           pointer = pointer+1
+        for j in range(0,NBasis):
+            f2.write(" ")
+            if (e1[j] >= 0):
+               f2.write(" ")
+            f2.write(str(fchk_notation(e1[j].real)))
+            if (counter%5 == 0):
+                f2.write("\n")
+                counter=0
+            counter=counter+1
+        counter =1      
+        BOE = AOE + (int(NBasis/5)+2)
+        if (NBasis%5 != 0):
+            f2.write("\n")
+        if (NBasis%5 == 0):
+            BOE = BOE - 1 
+        f2.write(data[BOE])
+        for j in range(0,NBasis):
+            f2.write(" ")
+            if (e2[j] >= 0):
+               f2.write(" ")
+            f2.write(str(fchk_notation(e2[j].real)))
+            if (counter%5 ==0):
+                f2.write("\n")
+                counter=0
+            counter = counter+1
+        counter =1
+        AMO = BOE + (int(NBasis/5)+2)
+        if (NBasis%5 != 0):
+            f2.write("\n")
+        if (NBasis%5 == 0):
+            AMO = AMO - 1
+        f2.write(data[AMO])
+        for i in range(0,NBasis):
+            for j in range(0,NBasis):
+                 f2.write(" ")
+                 if (V1[j,i] >= 0):
+                    f2.write(" ")
+                 f2.write(str(fchk_notation(V1[j,i].real)))
+                 if (counter%5 ==0):
+                     f2.write("\n")
+                     counter=0
+                 counter = counter + 1
+        counter = 1
+        BMO = AMO + (int(NBasis*NBasis/5))+2
+        if (NBasis%5 != 0):
+            f2.write("\n")
+        if (NBasis%5 == 0):
+            BMO = BMO - 1
+        f2.write(data[BMO])
+        for i in range(0,NBasis):
+               for j in range(0,NBasis):
+                    f2.write(" ")
+                    if (V2[j,i] >= 0):
+                       f2.write(" ")
+                    f2.write(str(fchk_notation(V2[j,i].real)))
+                    if (counter%5 ==0):
+                        f2.write("\n")
+                        counter=0
+                    counter = counter + 1
+        counter = 1
+        if (NBasis%5 != 0):
+           f2.write("\n")
+        pointer = BMO + (int(NBasis*NBasis/5))+2
+        while (pointer < len(data)):
+           f2.write(data[pointer])
+           pointer = pointer+1
+  print "Done."    
+
+# OVMerge: Does the opposite of OVParse, merges back the Occ and Virt components of the MO Coefficient matrix
+# Input  : A (Occ Matrix), B(Vir Matrix), Number of occupied orbitals, NBasis
+# 
+# Output : V = Full MO Coefficient Matrix
+#
+# (this subroutine has the exact opposite functionality of OVParse)
+#
+
+def OVMerge(A,B,NOcc,NBasis):
+    V = np.zeros((NBasis,NBasis))
+    for i in range(0,NOcc):
+        V[:,i] = A[:,i]
+
+    for j in range(NOcc,NBasis):
+        V[:,j] = B[:,j-NOcc]
+
+    return V
+
+

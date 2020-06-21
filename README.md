@@ -9,7 +9,7 @@ A compact orbital representation of ionization processes is described utilizing 
 ### Use of the NIO Program
 
 ```
->> python nio.py GroundState.fchk DetachedState.fchk
+>> python nio_beatles.py GroundState.fchk DetachedState.fchk
 output: NIO-GroundState.fchk
 ```
 

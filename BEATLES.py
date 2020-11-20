@@ -9,10 +9,13 @@ from numpy import genfromtxt
 import csv
 from decimal import Decimal
 import os
+import random
+from lyrics import *
 
 # BEATLES: Bundle of Essential and Assistive Tools Library for Electronic Structure
+#          A tribute to the Beatles
 #
-#          Updated Apr 26, 2020  by Hassan Harb
+#          Updated June 14, 2020  by Hassan Harb
 #
 #          /     |    \
 #         /      |     \
@@ -21,7 +24,7 @@ import os
 #      /=/ \=/ \= / \=/ \=\
 #     / ==  ==  ==  ==  == \
 #    / ==   ==  ==  ==   == \ 
-#
+#     (The original Beatles)
 # (ASCII retrieved from https://www.asciiart.eu/music/musicians/beatles )
 #
 #########################################################################
@@ -41,6 +44,7 @@ import os
 def NBasGrab(filename):
   NBasis = 0  
   NElem = 0
+  SCFEnergy = 0.0
   Charge = 0
   Multiplicity = 0
   NAtoms = 0
@@ -218,9 +222,7 @@ def MatGrab(filename,NBasis,switch):
               if  "Beta MO coefficients" in line:
                     i=i+1
                     BMO=i
-#                    print "Beta MO coefficients starts at line :", i
                     j=i+MOlines-1
-#                    print "Beta MO coefficients ends at line :", j
                     for m in range(0,j-i+1):
                        nextline = origin.next()
                        nextline = nextline.split()
@@ -464,10 +466,8 @@ def CalcNO(filename,NBasis):
        NOvalsB = NOvalsB.real 
        NOvecsA = NOvecsA.real
        NOvecsB = NOvecsB.real
-#       print "Alpha Natural Orbitals Eigenvectors =\n", NOvecsA
-#       print "Alpha Natural Orbitals Eigenvalues  =\n", NOvalsA
-#       print "Beta  Natural Orbitals Eigenvectors  =\n", NOvecsB
-#       print "Beta  Natural Orbitals Eigenvalues   =\n", NOvalsB
+       NOvecsA = np.dot(np.linalg.inv(Shalf),NOvecsA)
+       NOvecsB = np.dot(np.linalg.inv(Shalf),NOvecsB)
        return NOvecsA, NOvecsB, NOvalsA, NOvalsB
 
 # NElec: Reads in filename
@@ -682,14 +682,6 @@ def CartoZmat(RawCart,NAtoms,AtomicNum,filename2,switch):
 #          2 : Alpha Fock Matrix
 #         -2 : Beta Fock Matrix
 #          3 : Dipole matrix elements (x,y,z) [IN PROGRESS]
-
-#def ERIRead(filename):
-#    print "Reading ERIs from Gaussian Matrix File"
-#    print "Subroutine can only read regular 2e integrals (NO RAFINETTI)" 
-#    with open(filename,'r') as origin:
-#        for i, line in enumerate(origin):
-#            if "Label REGULAR 2E INTEGRALS" in line:
-#                print "Found 2e integrals!"
 
 def MatGrab2(filename,NBasis,switch):
     print "Reading from Matrix file\n"
@@ -1051,7 +1043,7 @@ def OVParse(A,NBasis,NOcc):
 
 def Biorthog(A,B,S,switch):                 # eqn numbers based on personal notes
    D = np.dot(np.transpose(B),np.dot(S,A))  # eq. 1
-   u, d, v  = np.linalg.svd(D)              # eq. 2
+   u, d, v  = np.linalg.svd(D,full_matrices=True)              # eq. 2
     
    DtD = np.dot(np.transpose(D),D)
    l, V = np.linalg.eig(DtD)
@@ -1065,7 +1057,7 @@ def Biorthog(A,B,S,switch):                 # eqn numbers based on personal note
       print "u = ", u
       print "v = ", v
    overlap =  np.linalg.det(u)*np.prod(d)*np.linalg.det(v)
-   return d, U, V, D
+   return d, u, v, D
 
 # PickColumn: Subroutine that selects a specific column from a two dimensional matrix (NBasis,NBasis), outputs an array (NBasis,1)
 # Input: A: Two dimensional matrix
@@ -1083,8 +1075,11 @@ def PickColumn(A,NBasis,i):
     return A_Column
 
 # WriteMOs: Subroutine that replaces the MO coefficients and orbital energies in a fchk file
-# Input:    
+# Input:    Input filename, output filename, Orbital coefficient alpha, orbital coefficient beta, Orbtial energies alpha, orbital energies beta, number of basis functions 
+# 
+# Output:   None. New file will be generated (filename3) that has the new Orbital coefficients and energies
 #
+
 def WriteMOs(filename1,filename3,V1,V2,e1,e2,NBasis):
 
   MOlines = int(len(V1)/5) + 1
@@ -1221,5 +1216,199 @@ def OVMerge(A,B,NOcc,NBasis):
         V[:,j] = B[:,j-NOcc]
 
     return V
+
+# DistanceMatrix: Calculates distances between all atoms in a molecule
+# Input         : fchk file name
+# 
+# Output        : Returns Distance Matrix and Atomic Symbol array.
+#
+# Unfinished part: generate and return a distance matrix (NAtoms x NAtoms) 
+#
+
+def DistanceMatrix(filename):
+    NBasis, NElem, Charge, Multiplicity, NAtoms, SCFEnergy = NBasGrab(filename)
+    Atomic_Numbers = GetAtoms(filename,NAtoms)
+    Atomic_Symbol = [""]*NAtoms
+    for i in range(0,NAtoms):
+        Atomic_Symbol[i] = AtomicSymbol(int(Atomic_Numbers[i]))
+    RawCart = GeomGet(filename,NAtoms)
+    Cart = np.resize(RawCart,(NAtoms,3))
+    Distance_Matrix = np.zeros((NAtoms,NAtoms))
+    for i in range(0,NAtoms):
+        for j in range(i+1,NAtoms):
+           e2 = [Cart[j,0],Cart[j,1],Cart[j,2]]
+           e1 = [Cart[i,0],Cart[i,1],Cart[i,2]]
+           Distance_Matrix[i,j] = np.around(DistAB(e1,e2),decimals=2)
+           Distance_Matrix[j,i] = np.around(DistAB(e1,e2),decimals=2)
+    return Distance_Matrix, Atomic_Symbol
+
+# PrintLyrics: A Function made just for fun, prints out a random quote from the Beatles songs
+# Input:       None, but reads in the lyrics.py library file (partially complete)
+#
+# Output:      None, prints lyrics.
+#
+    
+def PrintLyrics():
+    n = random.randint(1,32)
+    LyricsLibrary(n)
+
+# GetAtomicWeights: Grabs the "real atomic weights" from the fchk file
+# Input:            filename, Number of Atoms
+# 
+# Output:           One dimensional array, AtomicWeight, of dimensions NAtoms.
+#
+
+def GetAtomicWeights(filename1,NAtoms):
+   p = 0
+   r = 0
+   n = 1
+   AtomicWeight = np.zeros(NAtoms)
+   if (NAtoms%5 ==0):
+     n = 0
+   AtomLines = int(NAtoms/5) + n
+
+   with open(filename1,'r') as origin:
+      for i, line in enumerate(origin):
+         if "Real atomic weights" in line:
+            i = i + 1
+            pointer = i
+            endpointer = pointer + AtomLines -1
+            for m in range(0, endpointer - pointer + 1):
+                nextline = origin.next()
+                nextline = nextline.split()
+                for p in range(p,len(nextline)):
+                   AtomicWeight[r] = nextline[p]
+                   r = r + 1
+                p = 0
+   AtomicWeight = np.around(AtomicWeight,decimals=3)
+   return AtomicWeight
+
+
+# WriteMOsQChem: Subroutine that replaces the MO coefficients and orbital energies in a fchk file (QChem Version)
+# Input:         Input filename, output filename, Orbital coefficient alpha, orbital coefficient beta, Orbtial energies alpha, orbital energies beta, number of basis functions 
+# 
+# Output:        None. New file will be generated (filename3) that has the new Orbital coefficients and energies
+#
+
+def WriteMOsQChem(filename1,filename3,V1,V2,e1,e2,NBasis):
+
+  MOlines = int(len(V1)/5) + 1
+  p = 0
+  r = 0
+  with open(filename1,'r') as origin:
+      for i, line  in enumerate(origin):
+          if "Alpha Orbital Energies" in line:
+                AOE = i+1
+                AOE_header = line
+          if  "Alpha MO coefficients" in line:
+                AMO = i+1
+                AMO_header = line
+          if "Beta Orbital Energies" in line:
+                BOE = i+1
+                BOE_header = line
+          if "Beta MO coefficients" in line:
+                BMO = i+1
+                BMO_header = line
+
+  pointer=0
+  counter=1
+
+  Start_point = min(AMO,BMO,AOE,BOE)
+
+  with open(filename1,'r') as origin:
+    data = origin.readlines()
+    with open(filename3,'w') as f2:
+  
+        print "Writing results to new output file: ", filename3, " ... "
+  
+        while (pointer < Start_point-1):
+           f2.write(data[pointer])
+           pointer = pointer+1
+        print "pointer at line = ", pointer
+        f2.write(AOE_header)
+        for j in range(0,NBasis):
+            f2.write(" ")
+            if (e1[j] >= 0):
+               f2.write(" ")
+            f2.write(str(fchk_notation(e1[j].real)))
+            if (counter%5 == 0):
+                f2.write("\n")
+                counter=0
+            counter=counter+1
+        counter =1      
+        BOE = AOE + (int(NBasis/5)+2)
+        if (NBasis%5 != 0):
+            f2.write("\n")
+        if (NBasis%5 == 0):
+            BOE = BOE - 1 
+        f2.write(BOE_header)
+#        f2.write("Beta Orbital Energies\n")
+        for j in range(0,NBasis):
+            f2.write(" ")
+            if (e2[j] >= 0):
+               f2.write(" ")
+            f2.write(str(fchk_notation(e2[j].real)))
+            if (counter%5 ==0):
+                f2.write("\n")
+                counter=0
+            counter = counter+1
+        counter =1
+        AMO = BOE + (int(NBasis/5)+2)
+        if (NBasis%5 != 0):
+            f2.write("\n")
+        if (NBasis%5 == 0):
+            AMO = AMO - 1
+#        f2.write("Alpha MO coefficients\n")
+        f2.write(AMO_header)
+        for i in range(0,NBasis):
+            for j in range(0,NBasis):
+                 f2.write(" ")
+                 if (V1[j,i] >= 0):
+                    f2.write(" ")
+                 f2.write(str(fchk_notation(V1[j,i].real)))
+                 if (counter%5 ==0):
+                     f2.write("\n")
+                     counter=0
+                 counter = counter + 1
+        counter = 1
+        BMO = AMO + (int(NBasis*NBasis/5))+2
+        if (NBasis%5 != 0):
+            f2.write("\n")
+        if (NBasis%5 == 0):
+            BMO = BMO - 1
+#        f2.write("Beta MO Coefficients\n")
+        f2.write(BMO_header)
+#        f2.write(data[BMO])
+        for i in range(0,NBasis):
+               for j in range(0,NBasis):
+                    f2.write(" ")
+                    if (V2[j,i] >= 0):
+                       f2.write(" ")
+                    f2.write(str(fchk_notation(V2[j,i].real)))
+                    if (counter%5 ==0):
+                        f2.write("\n")
+                        counter=0
+                    counter = counter + 1
+        counter = 1
+        if (NBasis%5 != 0):
+           f2.write("\n")
+        pointer = BMO + (int(NBasis*NBasis/5))+2
+#        while (pointer < len(data)):
+#           f2.write(data[pointer])
+#           pointer = pointer+1
+  print "Done."    
+
+# Work in progress: Basis set reader:
+
+def ReadBasisSet(filename):
+    NBasis, NElem, Charge, Multiplicity, NAtoms, SCFEnergy = NBasGrab(filename)
+    print "Number of Basis functions =", NBasis
+    print "Number of atoms =", NAtoms
+    Atomic_Numbers = GetAtoms(filename,NAtoms)
+    print "Atomic Numbers =", Atomic_Numbers
+    Atomic_Symbol = [""]*NAtoms
+    for i in range(0,NAtoms):
+        Atomic_Symbol[i] = AtomicSymbol(int(Atomic_Numbers[i]))
+    print "Atomic Symbols =", Atomic_Symbol
 
 

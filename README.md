@@ -9,28 +9,7 @@ A compact orbital representation of ionization processes is described utilizing 
 ### Use of the NIO Program
 
 ```
->> python nio_beatles.py GroundState.fchk DetachedState.fchk
+>> python NIO.py GroundState.fchk DetachedState.fchk
 output: NIO-GroundState.fchk
 ```
 
-### Theory
-
-* Calculate difference 1- Particle Density Matrix
-
-  <img src="images/eqn1.png" width="150">
-
-  Change in the number of electrons  can be computed
-
-  <img src="images/eqn2.png" width="200">
-
-* Compute a set of orbitals, we term as **Natural Ionization Orbitals** (NIOs), from cannonical orbitals:
-
-  <img src="images/eqn3.png" width="420">
-
-* The matrix U can be determined by solving the eigenvalue equation. The eigenvalues represent the occupation change number for each NIO
-
-  <img src="images/eqn4.png" width="270">
-
-* The eigenvectors U can then be back transformed to the AO basis to give NIO coefficients V
-
-  <img src="images/eqn5.png" width="130">

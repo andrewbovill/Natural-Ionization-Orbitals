@@ -55,9 +55,9 @@ def CalNCol(T,k,NBasis,S):
 def NIOPops(NCol,NBasis):
     for i in range(0,NBasis):
        if (np.absolute(NCol[i]) >= 0.01):
-           print "The Contribution from MO ", i+1 , " is ", np.around(NCol[i],decimals=2)*100, "percent"
+           print ("The Contribution from MO ", i+1 , " is ", np.around(NCol[i],decimals=2)*100, "percent")
 #    print "---------------\n"
-    print "\n"
+    print ("\n")
 # Funciton: Calculate the Occ and Virt percentages in each NCol
 
 def NColPop(NCol,NOcc):
@@ -77,19 +77,19 @@ filename2 = sys.argv[2]
 #filename3 = "NIO-"+filename1
 filename3 = "NIO-"+filename2
 acc = 8 #accuracy to the acc's decimal place
-minEigVal = 0.25
+minEigVal = 0.01
 
-print "------------------------------------- "
-print "Natural Ionization Orbitals"
-print "Hassan Harb & Hrant P. Hratchian"
-print "University of California, Merced"
-print "To cite this program, please use the following DOI: "
-print "------------------------------------- \n"
+print("------------------------------------- ")
+print("Natural Ionization Orbitals")
+print("Hassan Harb & Hrant P. Hratchian")
+print("University of California, Merced")
+print("To cite this program, please use the following DOI: ")
+print("------------------------------------- \n")
 
 
-print "NIO: Calculates the density difference between two checkpoint files.\n"
-print "Checkpoint 1:", filename1
-print "Checkpoint 2:", filename2
+print("NIO: Calculates the density difference between two checkpoint files.\n")
+print("Checkpoint 1:", filename1)
+print("Checkpoint 2:", filename2)
 
 NBasis, NElem, Charge, Multiplicity, NAtoms, SCFEnergy = NBasGrab(filename1)
 
@@ -179,15 +179,15 @@ eigs_alpha_pop = np.zeros((eigs_alpha,3))
 eigs_beta_pop = np.zeros((eigs_beta,3))
 l = 0
 s = 0
-print "\n\n-------------------"
-print "Population Analysis"
-print "-------------------\n"
+print ("\n\n-------------------")
+print ("Population Analysis")
+print ("-------------------\n")
 
 for i in range(0,NBasis):
     if (np.absolute(e1[i].real) >= minEigVal):
 #        print "The ", i,"th element of e1 has an eigenvalue of ", np.around(e1[i].real,decimals=3) ," perform population analysis\n"
         eigs_alpha_pop[l,0] = np.around(e1[i].real,decimals=3)
-        print "Alpha NIO ", i+1, ":", "d_elec = ", np.around(e1[i].real,decimals=3)
+        print ("Alpha NIO ", i+1, ":", "d_elec = ", np.around(e1[i].real,decimals=3))
 #        print "----------------------------\n"
         NCol_i = CalNCol(Ta,i,NAlpha,S)
         eigs_alpha_pop[l,1], eigs_alpha_pop[l,2] = NColPop(NCol_i,NAlpha)
@@ -196,7 +196,7 @@ for i in range(0,NBasis):
     if (np.absolute(e2[i].real) >= minEigVal):
 #        print "The ", i,"th element of e2 has an eigenvalue of ", np.around(e2[i].real,decimals=3) ," perform population analysis\n"
         eigs_beta_pop[s,0] = np.around(e2[i].real,decimals=3)
-        print "Beta NIO ", i+1, ":", "d_elec = ", np.around(e2[i].real,decimals=3)
+        print ("Beta NIO ", i+1, ":", "d_elec = ", np.around(e2[i].real,decimals=3))
 #        print "----------------------------\n"
         NCol_i = CalNCol(Tb,i,NBeta,S)
         eigs_beta_pop[s,1], eigs_beta_pop[s,2] = NColPop(NCol_i,NBeta)
@@ -207,10 +207,10 @@ for i in range(0,NBasis):
 #print "Number of basis functions =", NBasis
 listoftitles = ["NIO Eigenvalue", "Percent Occ. (%)", "Percent Vir. (%)"]
 
-print "-------------------"
-print "Final NIO Results"
-print "-------------------"
-print "\nAlpha NIOs:\n"
+print ("-------------------")
+print ("Final NIO Results")
+print ("-------------------")
+print ("\nAlpha NIOs:\n")
 for i in range(0,eigs_alpha+1):
     if (i==0): 
         print('{:<20s}{:^20s}{:^20s}'.format("NIO Number",listoftitles[0],listoftitles[1]))
@@ -218,14 +218,14 @@ for i in range(0,eigs_alpha+1):
        j = i - 1
        print('{:<20d}{:^20.2f}{:^20.2f}'.format(i,eigs_alpha_pop[j,0],eigs_alpha_pop[j,1]*100)) 
       
-print "\nBeta NIOs:\n"
+print ("\nBeta NIOs:\n")
 for i in range(0,eigs_beta+1):
     if (i==0):
        print('{:<20s}{:^20s}{:^20s}'.format("NIO Number",listoftitles[0],listoftitles[1]))
     else:
        j = i - 1
        print('{:<20d}{:^20.2f}{:^20.2f}'.format(i,eigs_beta_pop[j,0],eigs_beta_pop[j,1]*100))
-print "\n"
+print ("\n")
 
 # This section deals with calculating the trace:
 
@@ -256,17 +256,17 @@ I_nbasis = np.eye(NBasis)
 Overlap_alpha = np.linalg.det(np.dot(e1_diag,TtT_a) + I_nbasis)
 Overlap_beta  = np.linalg.det(np.dot(e2_diag,TtT_b) + I_nbasis)
 
-print "\nOverlaps (alpha,beta) = ", Overlap_alpha, Overlap_beta
+print ("\nOverlaps (alpha,beta) = ", Overlap_alpha, Overlap_beta)
 Overlap_Product = Overlap_alpha*Overlap_beta
 #print "NIO Pole strength (calculted from determinants) = ", np.around(Overlap_Product,decimals=3)
-print "------------------"
-print "NIO Pole Strengths"
-print "------------------"
+print ("------------------")
+print ("NIO Pole Strengths")
+print ("------------------")
 
 print('{:<20s}{:^20s}'.format("Method","NIO Pole Strength"))
 print('{:<20s}{:^20.3f}'.format("Determinant",Overlap_Product))
 print('{:<20s}{:^20.3f}'.format("Trace",PRODUCT_AB))
 
 
-print "\n\nNIO Analysis done! To visualize the NIOs please open:", filename3
+print ("\n\nNIO Analysis done! To visualize the NIOs please open:", filename3)
 
